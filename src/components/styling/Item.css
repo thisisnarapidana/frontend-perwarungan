@@ -1,0 +1,61 @@
+.quadrant-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+}
+
+.top-left {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 50%;
+}
+
+.top-right {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50%;
+  height: 50%;
+}
+
+.bottom-left {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.bottom-right {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
+.image {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 140px;
+  height: 140px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+.qty {
+  background-color: white;
+  border-radius: 40%;
+  padding: 4px 10px;
+  display: inline-block;
+  font-weight: bold;
+  color: rgb(103, 192, 103);
+}
+
+.input {
+  height: 40px; /* Set the desired height */
+  padding: 10px; /* Adjust padding as needed */
+  font-size: 16px; /* Adjust font size as needed */
+  box-sizing: border-box; /* Ensure padding is included in the height */
+}

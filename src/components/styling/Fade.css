@@ -1,0 +1,42 @@
+.cart {
+    animation: fadeInBottom 0.5s ease-in-out forwards;
+    position: fixed;
+    background-color: rgb(147, 189, 147);
+    left: 0;
+    right: 0;
+    top: 0; /* Align to the top of the viewport */
+    bottom: 0; /* Stretch to the bottom of the viewport */
+    overflow-y: auto; /* Add vertical scrollbar */
+}
+
+.fade-in-bottom {
+    z-index: 999;
+    animation: fadeInBottom 0.5s ease-in-out forwards;
+}
+
+.fade-out-bottom {
+    z-index: 999;
+    animation: fadeOutBottom 0.5s ease-in-out forwards;
+}
+
+@keyframes fadeInBottom {
+    from {
+        opacity: 0;
+        transform: translateY(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOutBottom {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(100%);
+    }
+}

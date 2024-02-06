@@ -1,0 +1,95 @@
+.canvas-container {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.input-bar {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-bottom: 1px solid #ccc;
+  background-color: #555555;
+}
+
+.find-logo {
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+}
+
+.search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 8px;
+  border-radius: 20px;
+}
+
+.items-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  overflow-x: hidden;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+}
+
+.bottomborder {
+  border-bottom: 1px solid #ccc;
+}
+
+.item-image {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+  border-radius: 5px;
+}
+
+.item-info {
+  flex: 1;
+}
+
+.music-name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.artist-name {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.length {
+  margin-left: 20px;
+  font-size: 14px;
+  color: #666;
+}
+.footer {
+  padding: 10px;
+  background-color: #f0f0f0;
+  text-align: center;
+}
+
+.footer button {
+  padding: 8px 16px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.footer button:hover {
+  background-color: #0056b3;
+}

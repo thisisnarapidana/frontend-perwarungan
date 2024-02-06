@@ -1,0 +1,14 @@
+.kontener {
+    border: 10%;
+    background-color: white;
+}
+  
+.centered-text {
+    color: white;
+    text-align: center;
+}
+
+.overscroll-contain {
+    /* overscroll-behavior-y: contain; */
+    overflow: hidden;
+}

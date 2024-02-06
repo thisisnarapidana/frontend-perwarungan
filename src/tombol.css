@@ -1,0 +1,33 @@
+.tombol {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
+  font-weight: bold;
+  color: rgb(103, 192, 103);
+  letter-spacing: 1px;
+  line-height: 15px;
+  border: 1px solid rgb(103, 192, 103);
+  border-radius: 40px;
+  transition: all 0.3s ease 0s;
+  padding: 7px 20px;
+  background: rgb(255, 255, 255);
+  user-select: none;
+}
+
+.tombolbgrnd {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 20px;
+  color: rgb(255, 255, 255);
+  letter-spacing: 1px;
+  line-height: 15px;
+  border: 1px solid rgb(103, 192, 103);
+  border-radius: 40px;
+  transition: all 0.3s ease 0s;
+  padding: 10px 20px;
+  background: rgb(103, 192, 103);
+  white-space: nowrap;
+}
+
+#tombol:active {
+  vertical-align: top;
+  padding: 8px 13px 6px;
+}
