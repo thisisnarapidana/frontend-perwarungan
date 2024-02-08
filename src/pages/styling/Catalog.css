@@ -5,7 +5,7 @@
   align-content: space-evenly;
   background-color: white;
 }
-.loading-message{
+.loading-message {
   position: absolute;
   top: 40vh;
   left: 30vw;
@@ -60,7 +60,22 @@
     padding: 10px;
   }
 }
-@media (min-width: 1400px) {
+@media (min-width: 1401px) and (max-width: 1800px) {
+  .kontener {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  .rectangle {
+    width: calc(25% - 20px);
+    height: 200px;
+    border-radius: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 15px;
+    padding: 10px;
+  }
+}
+@media (min-width: 1801px) {
   .kontener {
     padding-left: 15px;
     padding-right: 15px;

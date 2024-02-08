@@ -1,7 +1,3 @@
-// email zaditgans671555@gmail.com
-//instagram@insvrgent
-//siapa tau pengen mukul saya
-
 import React, { useState, useEffect } from 'react';
 import apiUrl from '../apiConfig';
 import './styling/Catalog.css';

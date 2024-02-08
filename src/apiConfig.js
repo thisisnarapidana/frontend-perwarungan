@@ -1,4 +1,3 @@
-// const apiUrl = "https://3gdddy-1946.csb.app";
-const apiUrl = "http://localhost:1946";
+const apiUrl = "https://j6n9dh-1946.csb.app";
 
 export default apiUrl;

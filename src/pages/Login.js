@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '../App.css';
 import apiUrl from '../apiConfig';
 
-import isAuthenticated from '../authCheck';
+import { isAuthenticated } from '../userCaller.js';
 
 const Login = () => {
     const [username, setUsername] = useState('');
