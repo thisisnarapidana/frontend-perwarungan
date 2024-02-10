@@ -3,29 +3,24 @@ import { useNavigate } from 'react-router-dom';
 import '../App.css';
 import apiUrl from '../apiConfig';
 
-import { isAuthenticated } from '../userCaller.js';
-
-const Login = () => {
+const Login = ({auth}) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [isCooldown, setIsCooldown] = useState(false);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const checkAuth = async () => {
-            const res = await isAuthenticated();
-            if (res.success) navigate('/');
-        }
+    useEffect(() => {   
+        if (auth.success) 
+            navigate('/');
 
-        checkAuth();
-    }, [navigate]);
+    }, [auth]);
 
     async function log() {
         if (!isCooldown) {
             setIsCooldown(true);
 
             try {
-                const response = await fetch( apiUrl + '/users/signin', {
+                const response = await fetch(apiUrl + '/users/signin', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

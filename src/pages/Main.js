@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
-import useSocket from "../components/SocketComponent";
 import {
   BrowserRouter as Router,
   Route,
   Routes,
   useLocation,
 } from "react-router-dom";
-import { isAuthenticated } from "../userCaller.js";
+import { useAuthentication } from "../userCaller.js";
 import Navbar from "../Navbar";
 import Dashboard from "../Dashboard";
 import Login from "./Login";
@@ -23,29 +22,21 @@ const Main = () => {
 };
 
 const MainRoutes = () => {
+  const authenticationResponse = useAuthentication();
+
   const [tableNo, setTableNo] = useState("");
   const location = useLocation();
-  const socket = useSocket();
   let [auth, setAuth] = useState({ success: false, user_id: "", role: "" });
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const response = await isAuthenticated();
-        setAuth(response);
-        socket.emit("initClerk", response.user_id);
-        console.log(auth);
-      } catch (error) {
-        console.log("gagal login");
-      }
-    };
-
-    checkAuth();
-  }, []);
+  useEffect(() => {   
+      if (authenticationResponse && authenticationResponse.success) 
+        setAuth(authenticationResponse);
+      
+  }, [authenticationResponse]);
 
   useEffect(() => {
     if (!location.pathname.startsWith("/scan/")) {
-      setTableNo(""); // reset, karena tidak dalam meja
+      setTableNo("");
     }
   }, [location.pathname]);
 
@@ -61,7 +52,7 @@ const MainRoutes = () => {
       />
       <Routes>
         <Route path="/" element={<Dashboard auth={auth} />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<Login auth={auth} />} />
         <Route path="/scan" element={<Scan />} />
         <Route
           path="/scan/:table_id"

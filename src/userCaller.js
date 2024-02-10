@@ -1,20 +1,41 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import apiUrl from './apiConfig';
+import useSocket from './components/SocketComponent';
 
-export const isAuthenticated = async () => {
-    try {
-        const response = await fetch(apiUrl + '/users/signcheck', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('session_id')
-            },
-        });
 
-        return await response.json();
-    } catch (error) {
-        return false;
-    }
+export const useAuthentication = () => {
+    const { getSocketId } = useSocket();
+    const socketId = getSocketId();
+    const [response, setResponse] = useState(null);
+
+    useEffect(() => {
+        console.log("Inside useAuthentication useEffect");
+        const fetchAuthenticationStatus = async () => {
+            console.log("Current socketId:", socketId);
+
+            try {
+                console.log('checking');
+                const res = await fetch(apiUrl + '/users/signcheck', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('session_id')
+                    },
+                    body: JSON.stringify({
+                        socketId: socketId
+                    })
+                });
+                const data = await res.json();
+                setResponse(data);
+            } catch (error) {
+                console.error('Error checking authentication:', error);
+            }
+        };
+
+        fetchAuthenticationStatus();
+    }, [socketId]);
+
+    return response;
 };
 
 export const firstScan = async () => {

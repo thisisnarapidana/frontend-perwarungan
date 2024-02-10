@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from "react";
-import useSocket from "./SocketComponent";
 import TrackDetails from "./TrackDetailsComponent";
 import "./styling/SpotifyPlayerComponent.css";
 import apiUrl from "../apiConfig";
 import "../tombol.css";
 
-function SpotifyPlayerComponent({ rolee }) {
+function SpotifyPlayerComponent({ rolee, socket }) {
   const role = rolee || "";
-  const { socket } = useSocket();
   const [spotifyLoggedCode, setSpotifyLoggedCode] = useState(200); //200 = success, 401 = token not valid, 403 = spotify isn't premium
-  const [messages, setMessages] = useState([]);
   const [trackName, setTrackName] = useState("");
   const [tracks, setTracks] = useState([]);
   const [currentTrack, setCurrentTrack] = useState([]);
@@ -19,33 +16,27 @@ function SpotifyPlayerComponent({ rolee }) {
   }, [role]);
 
   useEffect(() => {
-    if (!socket) return;
-
-    socket.on("transaction", ({ table_id, transaction_id }) => {
-      console.log(table_id, transaction_id);
-    });
-
-    socket.on("chat message", (msg) => {
-      setMessages((prevMessages) => [...prevMessages, msg]);
-    });
-
-    socket.on("restrack", ({ tracks }) => {
+    const handleRestrack = ({ tracks }) => {
       setTracks(tracks);
-    });
+    };
 
-    socket.on("tracknotadded", ({ reason }) => {
-      // if(reason === "PREMIUM_REQUIRED")  
-    });
-
-    socket.on("current", (currentTrack) => {
+    const handleCurrent = (currentTrack) => {
       let temptrack = [];
       temptrack.push(currentTrack);
       console.log(currentTrack);
       if (typeof temptrack[0].name !== "undefined") setCurrentTrack(temptrack);
-    });
+    };
+
+    if (socket) {
+      socket.on("restrack", handleRestrack);
+      socket.on("current", handleCurrent);
+    }
 
     return () => {
-      socket.disconnect();
+      if (socket) {
+        socket.off("restrack", handleRestrack);
+        socket.off("current", handleCurrent);
+      }
     };
   }, [socket]);
 
@@ -60,10 +51,10 @@ function SpotifyPlayerComponent({ rolee }) {
           Authorization: "Bearer " + localStorage.getItem("session_id"),
         },
       });
-      console.log(response.status);
+      // console.log(response.status);
       setSpotifyLoggedCode(response.status);
     } catch (error) {
-      console.error("Error checking token:", error);
+      // console.error("Error checking token:", error);
     }
   };
 

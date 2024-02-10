@@ -1,25 +1,34 @@
 import { useState, useEffect } from "react";
 import io from "socket.io-client";
+import { setModal  } from "../Dashboard";
 
 function useSocket() {
   const [socket, setSocket] = useState(null);
-  const [socketId, setSocketId] = useState(null); // New state for socket id
+  const [socketId, setSocketId] = useState(null);
 
   useEffect(() => {
-    const newSocket = io("https://j6n9dh-1946.csb.app");
+    const newSocket = io("http://localhost:1946");
     setSocket(newSocket);
 
-    // Set up event listener to get the socket id once connected
     newSocket.on("connect", () => {
       setSocketId(newSocket.id);
     });
 
+    newSocket.on("transaction", ({ table_id, transaction_id }) => {
+      setModal(transaction_id);
+    });
+    
     return () => {
       newSocket.disconnect();
     };
   }, []);
 
-  return { socket, socketId }; // Return both socket and socketId as an object
+  // Expose a function to get the socketId
+  const getSocketId = () => {
+    return socketId;
+  };
+
+  return { socket, getSocketId }; // Return both socket and getSocketId function
 }
 
 export default useSocket;
