@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
-import useSocket from './components/SocketComponent.js';
-import SpotifyPlayerComponent from './components/SpotifyPlayerComponent.js';
-import Catalog from './pages/Catalog.js';
-import Floorplan from './pages/Floorplan.js';
-import Tab from 'react-bootstrap/Tab';
-import Tabs from 'react-bootstrap/Tabs';
-import './tombol.css';
+import useSocket from "./components/SocketComponent.js";
+import SpotifyPlayerComponent from "./components/SpotifyPlayerComponent.js";
+import Catalog from "./pages/Catalog.js";
+import Floorplan from "./pages/Floorplan.js";
+import Tab from "react-bootstrap/Tab";
+import Tabs from "react-bootstrap/Tabs";
+import "./tombol.css";
 
-import SalesChart from './SalesChart';
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
+import SalesChart from "./SalesChart";
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
 
 let toggleModalFunction;
 let setModalFunction;
@@ -31,7 +31,6 @@ function Dashboard({ auth }) {
   // Assign functions to variables accessible outside the component
   toggleModalFunction = toggleModal;
   setModalFunction = setModal;
-
 
   useEffect(() => {
     if (!socket) return;
@@ -55,7 +54,7 @@ function Dashboard({ auth }) {
               <Modal.Title>Modal title</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Floorplan/>
+              <Floorplan rolee={auth.role} />
             </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={toggleModal}>
@@ -65,24 +64,30 @@ function Dashboard({ auth }) {
             </Modal.Footer>
           </Modal>
           <SpotifyPlayerComponent rolee={auth.role} socket={socket} />
-          <Tabs defaultActiveKey="katalog" id="uncontrolled-tab-example" className="mb-3">
+          <Tabs
+            defaultActiveKey="katalog"
+            id="uncontrolled-tab-example"
+            className="mb-3"
+          >
             <Tab eventKey="denah" title="denah">
-              <Floorplan rolee={auth.role || ''} />
+              <Floorplan rolee={auth.role || ""} />
             </Tab>
             <Tab eventKey="katalog" title="katalog">
-              <Catalog rolee={auth.role || ''} />
+              <Catalog rolee={auth.role || ""} />
             </Tab>
-            {auth.role === "admin" &&
+            {auth.role === "admin" && (
               <Tab eventKey="sales" title="sales">
                 <SalesChart />
               </Tab>
-            }
+            )}
           </Tabs>
         </>
       ) : (
         <>
-          <SpotifyPlayerComponent rolee={''} socket={socket} />
-          <div><Catalog /></div>
+          <SpotifyPlayerComponent rolee={""} socket={socket} />
+          <div>
+            <Catalog />
+          </div>
         </>
       )}
     </div>

@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import io from "socket.io-client";
-import { setModal  } from "../Dashboard";
+import { setModal } from "../Dashboard";
 
 function useSocket() {
   const [socket, setSocket] = useState(null);
   const [socketId, setSocketId] = useState(null);
 
   useEffect(() => {
-    const newSocket = io("http://localhost:1946");
+    const newSocket = io("https://phchw7-1946.csb.app/");
     setSocket(newSocket);
 
     newSocket.on("connect", () => {
@@ -17,7 +17,7 @@ function useSocket() {
     newSocket.on("transaction", ({ table_id, transaction_id }) => {
       setModal(transaction_id);
     });
-    
+
     return () => {
       newSocket.disconnect();
     };

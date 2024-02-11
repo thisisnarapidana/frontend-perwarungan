@@ -60,6 +60,7 @@ function SpotifyPlayerComponent({ rolee, socket }) {
 
   useEffect(() => {
     if (trackName.trim() !== "") {
+      console.log(trackName);
       socket.emit("reqtrack", { searchTerm: trackName });
     }
   }, [trackName, socket]);
@@ -156,24 +157,31 @@ function SpotifyPlayerComponent({ rolee, socket }) {
                 />
               </div>
             ))}
-            {role === "clerk" &&
+            {role === "clerk" && (
               <>
-                {spotifyLoggedCode > 200 ?
+                {spotifyLoggedCode > 200 ? (
                   <>
-                    {spotifyLoggedCode === 401 && (<button className="tombol" onClick={handleLogin}>Masuk Spotify sebagai pemutar</button>)}
+                    {spotifyLoggedCode === 401 && (
+                      <button className="tombol" onClick={handleLogin}>
+                        Masuk Spotify sebagai pemutar
+                      </button>
+                    )}
                     {spotifyLoggedCode === 403 && (
                       <div>
-                        <button className="tombol" onClick={handleLogout}>Keluar dan perpanjang langganan Spotify</button>
+                        <button className="tombol" onClick={handleLogout}>
+                          Keluar dan perpanjang langganan Spotify
+                        </button>
                       </div>
                     )}
-                    
                   </>
-                  :
-                  <button className="tombol" onClick={handleLogout}>Keluar Spotify</button>
-                }
+                ) : (
+                  <button className="tombol" onClick={handleLogout}>
+                    Keluar Spotify
+                  </button>
+                )}
               </>
-            }
-{/*             
+            )}
+            {/*             
             {tableNo == "" ? (
               <Link
                 style={{ textDecoration: "none" }}
