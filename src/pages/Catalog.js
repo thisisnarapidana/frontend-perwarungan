@@ -8,8 +8,10 @@ import Item from "../components/Item";
 import Cart from "../components/cartComponent";
 
 import { GetAll, Delete } from "../itemCaller";
+import { Link } from "react-router-dom";
 
-const Catalog = ({ rolee }) => {
+const Catalog = ({ rolee, tableNo }) => {
+  const no_table = tableNo || "";
   const role = rolee || "";
   const [items, setItems] = useState([]);
   const [tempitems, setTempItems] = useState([]);
@@ -226,6 +228,19 @@ const Catalog = ({ rolee }) => {
                   onClick={handleCart}
                   className="tombolbgrnd"
                 >
+                  {!isCartOpen &&
+                    (no_table === "" ? (
+                      <Link
+                        style={{ textDecoration: "none" }}
+                        to="/scan"
+                        className="tombol"
+                      >
+                        scan meja
+                      </Link>
+                    ) : (
+                      <div className="tombol">dikirim ke meja no {tableNo}</div>
+                    ))}
+                  &nbsp;
                   {!isCartOpen ? `Keranjang ${getLength()}` : "Tutup"}
                 </button>
               </div>

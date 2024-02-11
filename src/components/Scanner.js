@@ -4,7 +4,11 @@ const Scanner = () => {
   const navigate = useNavigate();
 
   const handleDecode = (result) => {
-    const url = new URL(result);
+    let url = "";
+    if (!result.startsWith("http://") && !result.startsWith("https://"))
+      url = new URL("https://" + result);
+    else url = new URL(result);
+
     const path = url.pathname;
 
     const parameters = path.split("/");

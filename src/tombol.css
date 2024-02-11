@@ -11,6 +11,9 @@
   padding: 7px 20px;
   background: rgb(255, 255, 255);
   user-select: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .tombolbgrnd {
@@ -25,6 +28,9 @@
   padding: 10px 20px;
   background: rgb(103, 192, 103);
   white-space: nowrap;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #tombol:active {

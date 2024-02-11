@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from "react";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  useLocation,
-} from "react-router-dom";
+import useSocket from "../components/SocketComponent";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { useAuthentication } from "../userCaller.js";
 import Navbar from "../Navbar";
 import Dashboard from "../Dashboard";
@@ -22,23 +18,24 @@ const Main = () => {
 };
 
 const MainRoutes = () => {
+  const { socket } = useSocket();
+
   const authenticationResponse = useAuthentication();
 
-  const [tableNo, setTableNo] = useState("");
-  const location = useLocation();
   let [auth, setAuth] = useState({ success: false, user_id: "", role: "" });
 
-  useEffect(() => {   
-      if (authenticationResponse && authenticationResponse.success) 
-        setAuth(authenticationResponse);
-      
-  }, [authenticationResponse]);
+  useEffect(() => {
+    if (!socket) return;
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [socket]);
 
   useEffect(() => {
-    if (!location.pathname.startsWith("/scan/")) {
-      setTableNo("");
-    }
-  }, [location.pathname]);
+    if (authenticationResponse && authenticationResponse.success)
+      setAuth(authenticationResponse);
+  }, [authenticationResponse]);
 
   return (
     <>
@@ -48,15 +45,14 @@ const MainRoutes = () => {
           auth.role === "clerk" ||
           auth.role === "admin"
         }
-        tableNo={tableNo}
       />
       <Routes>
-        <Route path="/" element={<Dashboard auth={auth} />} />
+        <Route path="/" element={<Dashboard socket={socket} auth={auth} />} />
         <Route path="/login" element={<Login auth={auth} />} />
         <Route path="/scan" element={<Scan />} />
         <Route
           path="/scan/:table_id"
-          element={<TableComponent setTable={setTableNo} />}
+          element={<TableComponent socket={socket} />}
         />
       </Routes>
     </>

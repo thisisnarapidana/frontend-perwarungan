@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import useSocket from "./components/SocketComponent.js";
+import React, { useState } from "react";
 import SpotifyPlayerComponent from "./components/SpotifyPlayerComponent.js";
 import Catalog from "./pages/Catalog.js";
 import Floorplan from "./pages/Floorplan.js";
@@ -14,8 +13,7 @@ import Modal from "react-bootstrap/Modal";
 let toggleModalFunction;
 let setModalFunction;
 
-function Dashboard({ auth }) {
-  const { socket } = useSocket();
+function Dashboard({ socket, auth }) {
   const [showModal, setShowModal] = useState(false);
 
   // Function to toggle modal visibility
@@ -31,14 +29,6 @@ function Dashboard({ auth }) {
   // Assign functions to variables accessible outside the component
   toggleModalFunction = toggleModal;
   setModalFunction = setModal;
-
-  useEffect(() => {
-    if (!socket) return;
-
-    return () => {
-      socket.disconnect();
-    };
-  }, [socket]);
 
   return (
     <div>
@@ -84,7 +74,7 @@ function Dashboard({ auth }) {
         </>
       ) : (
         <>
-          <SpotifyPlayerComponent rolee={""} socket={socket} />
+          <SpotifyPlayerComponent socket={socket} />
           <div>
             <Catalog />
           </div>

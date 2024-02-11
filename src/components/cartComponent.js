@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { firstScan } from '../userCaller.js';
+import { firstScan } from "../userCaller.js";
 import "./styling/Fade.css"; // Assuming you have a CSS file for your styles
 import { Checkout } from "../transactionCaller";
 import { Link } from "react-router-dom";
+import "../tombol.css";
+
 const Cart = ({ price, children, isOpen }) => {
   const [cartHeight, setCartHeight] = useState(0);
   const [started, start] = useState(false);
@@ -34,20 +36,18 @@ const Cart = ({ price, children, isOpen }) => {
 
   const CheckOut = async () => {
     try {
-      if(localStorage.getItem("session_id") === null){
+      if (localStorage.getItem("session_id") === null) {
         try {
           await firstScan();
-        } catch (error) {
-
-        }
+        } catch (error) {}
       }
-      
-    const url = new URL(window.location);
-    const path = url.pathname;
 
-    const parameters = path.split("/");
+      const url = new URL(window.location);
+      const path = url.pathname;
 
-    const table_id = parameters[2];
+      const parameters = path.split("/");
+
+      const table_id = parameters[2];
 
       const checkoutResponse = await Checkout(table_id);
       console.log("Checkout Response:", checkoutResponse);
@@ -87,25 +87,28 @@ const Cart = ({ price, children, isOpen }) => {
         <div
           style={{
             maxWidth: "50%",
-            height: "100%",
+            height: "50%",
             display: "flex",
             justifyContent: "space-between",
           }}
         >
-          {logged === false && (
-            <Link to="/scan">
-              <button>
-                <img
-                  alt="scanqr"
-                  style={{ width: "100%", height: "100%" }}
-                  src="/scanqr.png"
-                />
-              </button>
+          {logged === false ? (
+            <Link
+              style={{ textDecoration: "none" }}
+              to="/scan"
+              className="tombol"
+            >
+              scan meja
             </Link>
+          ) : (
+            <button
+              style={{ textDecoration: "none" }}
+              to="/scan"
+              className="tombol"
+            >
+              checkout
+            </button>
           )}
-          <button style={{ width: "100%" }} onClick={CheckOut}>
-            CheckOut
-          </button>
         </div>
       </div>
     </div>

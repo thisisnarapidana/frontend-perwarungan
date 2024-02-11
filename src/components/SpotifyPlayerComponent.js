@@ -25,6 +25,7 @@ function SpotifyPlayerComponent({ rolee, socket }) {
       temptrack.push(currentTrack);
       console.log(currentTrack);
       if (typeof temptrack[0].name !== "undefined") setCurrentTrack(temptrack);
+      else setCurrentTrack([]);
     };
 
     if (socket) {
@@ -86,15 +87,16 @@ function SpotifyPlayerComponent({ rolee, socket }) {
     }
   };
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     try {
-      await fetch(apiUrl + "/spotify/logout", {
+      fetch(apiUrl + "/spotify/logout", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + localStorage.getItem("session_id"),
         },
       });
+
       window.location.reload();
     } catch (error) {
       console.error(error);
@@ -145,9 +147,15 @@ function SpotifyPlayerComponent({ rolee, socket }) {
                   reqTrackHandle={() => reqTrackHandle(track.id)}
                 />
               ))}
+
+            {currentTrack.length > 0 ? (
+              <h4>Sedang diputar</h4>
+            ) : (
+              <h4>Menunggu permusikan</h4>
+            )}
+
             {currentTrack.map((track, index) => (
               <div key={index}>
-                <h4>now playing</h4>
                 <TrackDetails
                   draggable={false}
                   name={track.name}

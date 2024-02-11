@@ -1,8 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { logout } from "./userCaller.js";
-import "./tombol.css";
-const Navbar = ({ isLogged, tableNo }) => {
+
+const Navbar = ({ isLogged }) => {
   const handleLogout = () => {
     logout();
     localStorage.removeItem("session_id");
@@ -15,17 +15,6 @@ const Navbar = ({ isLogged, tableNo }) => {
           Kebangsaan
         </Link>
 
-        {tableNo == "" ? (
-          <Link
-            style={{ textDecoration: "none" }}
-            to="/scan"
-            className="tombol"
-          >
-            scan meja{" "}
-          </Link>
-        ) : (
-          <div className="tombol">dikirim ke meja no {tableNo} </div>
-        )}
         {isLogged ? (
           <Link
             className="navbar-brand"

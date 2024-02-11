@@ -1,9 +1,9 @@
-import Scanner from '../components/Scanner';
+import Scanner from "../components/Scanner";
 
 function Scan() {
   return (
     <div>
-      <Scanner/>
+      <Scanner />
     </div>
   );
 }
