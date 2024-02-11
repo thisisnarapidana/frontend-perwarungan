@@ -1,7 +1,14 @@
 import React, { useState } from "react";
 import Draggable from "react-draggable";
 
-const TrackDetails = ({ draggable, name, image, artist, duration, reqTrackHandle }) => {
+const TrackDetails = ({
+  draggable,
+  name,
+  image,
+  artist,
+  duration,
+  reqTrackHandle,
+}) => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
 
   const handleDrag = (e, ui) => {
@@ -20,8 +27,8 @@ const TrackDetails = ({ draggable, name, image, artist, duration, reqTrackHandle
     if (positionPercentage < -50) {
       console.log("remove");
     } else if (positionPercentage > 50) {
-        reqTrackHandle();
-        return;
+      reqTrackHandle();
+      return;
     } else {
       setPosition({ x: 0, y: 0 });
     }
@@ -44,17 +51,14 @@ const TrackDetails = ({ draggable, name, image, artist, duration, reqTrackHandle
 
   return (
     <Draggable
+      disabled={!draggable}
       axis="x" // Restrict dragging to horizontal axis
       position={position}
       onDrag={handleDrag}
       onStop={handleStop}
     >
-      <div className= {draggable? 'item bottomborder' : 'item'}>
-        <img
-          src={image}
-          alt="Music"
-          className="item-image"
-        />
+      <div className={draggable ? "item bottomborder" : "item"}>
+        <img src={image} alt="Music" className="item-image" />
         <div className="item-info">
           <h3 className="music-name">{name}</h3>
           <p className="artist-name">{artist}</p>

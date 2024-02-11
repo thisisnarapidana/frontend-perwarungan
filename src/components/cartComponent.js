@@ -103,7 +103,7 @@ const Cart = ({ price, children, isOpen }) => {
           ) : (
             <button
               style={{ textDecoration: "none" }}
-              to="/scan"
+              onClick={CheckOut}
               className="tombol"
             >
               checkout

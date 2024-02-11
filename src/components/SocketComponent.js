@@ -15,6 +15,7 @@ function useSocket() {
     });
 
     newSocket.on("transaction", ({ table_id, transaction_id }) => {
+      console.log("tr");
       setModal(transaction_id);
     });
 
