@@ -1,35 +1,91 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./styling/Item.css";
 import "../tombol.css";
 
 const Item = ({
-  isDisabled,
   item,
   apiUrl,
   startqty,
-  cancel,
   listed,
-  onEdit,
-  isAdmin,
+  onEdit, // for qty changing
+
+  //below is for admin and clerk
+  role,
+
+  //below is for admin
+  beingEdited,
+  cancel,
   onItemEdit,
   deleteItem,
+  onSaveItem,
+
+  //below is for clerk
+  transactionFollowUp,
+  clerkJobHandler,
 }) => {
   const [qty, setQty] = useState(startqty);
-  const [editableItem, setEditableItem] = useState(null);
+  const [formData, setFormData] = useState({
+    name: "",
+    price: "",
+    qty: "",
+    image: null, // New state to hold the image file
+  });
+
+  const [imagePreview, setImagePreview] = useState(
+    apiUrl + "/" + item.image_url,
+  );
 
   useEffect(() => {
-    // set();
-    // navigator.geolocation.getCurrentPosition(function(position) {
-    //     const latitude = position.coords.latitude;
-    //     const longitude = position.coords.longitude;
-    //     console.log('Latitude:', latitude);
-    //     console.log('Longitude:', longitude);
-    //     const accuracy = position.coords.accuracy;
-    //     sss(latitude + " " + longitude + " " + accuracy);
-    // }, function(error) {
-    //     console.error('Error getting geolocation:', error);
-    // });
-  }, []);
+    setFormData({
+      name: item.name,
+      price: item.price,
+      qty: item.startQty,
+    });
+  }, [item]);
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setFormData({
+        ...formData,
+        image: file,
+      });
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleFieldChange = (event, field) => {
+    let name = event.target.name;
+    let value = event.target.value;
+
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleSaveItem = () => {
+    onSaveItem(formData);
+  };
+
+  // useEffect(() => {
+  // set();
+  // navigator.geolocation.getCurrentPosition(function(position) {
+  //     const latitude = position.coords.latitude;
+  //     const longitude = position.coords.longitude;
+  //     console.log('Latitude:', latitude);
+  //     console.log('Longitude:', longitude);
+  //     const accuracy = position.coords.accuracy;
+  //     sss(latitude + " " + longitude + " " + accuracy);
+  // }, function(error) {
+  //     console.error('Error getting geolocation:', error);
+  // });
+  // }, []);
 
   const cancelHandler = () => {
     setQty(0);
@@ -49,61 +105,57 @@ const Item = ({
     onEdit(qty + 1);
   };
 
-  const handleEditClick = (field) => {
-    if (isAdmin && !isDisabled) {
-      setEditableItem(field);
-      onItemEdit();
+  const handleEditClick = (t) => {
+    if (role === "admin") {
+      onItemEdit(t);
     }
-  };
-
-  const handleFieldChange = (event, field) => {
-    let name = event.target.name;
-    let value = event.target.value;
   };
 
   return (
     <div className="quadrant-container">
       <div className="top-left">
-        <div
-          className={editableItem === "name" ? "editable" : "name"}
-          onClick={() => handleEditClick("name")}
-        >
-          {editableItem === "name" ? (
-            <input
-              name="name"
-              type="text"
-              className="input"
-              value={item.name}
-              onChange={(e) => handleFieldChange(e, "name")}
-            />
-          ) : (
-            <h1 style={{ fontSize: "20px" }}>{item.name}</h1>
-          )}
-        </div>
-        <div
-          className={editableItem === "price" ? "editable" : "price"}
-          onClick={() => handleEditClick("price")}
-        >
-          {editableItem === "price" ? (
-            <input
-              name="price"
-              type="text"
-              value={item.price}
-              onChange={(e) => handleFieldChange(e, "price")}
-            />
-          ) : (
-            item.price
-          )}
-        </div>
+        <input
+          disabled={!beingEdited}
+          className={!beingEdited ? "name transparent" : "name"}
+          name="name"
+          type="text"
+          value={formData.name}
+          onChange={(e) => handleFieldChange(e)}
+        />
+        <input
+          disabled={!beingEdited}
+          className={!beingEdited ? "price transparent" : "price"}
+          name="price"
+          type="text"
+          value={formData.price}
+          onChange={(e) => handleFieldChange(e)}
+        />
       </div>
       <div className="top-right">
-        <img
-          name="image"
-          src={apiUrl + "/" + item.image_url}
-          alt="Product"
-          className={editableItem === "image" ? "editable" : "image"}
-          onClick={() => handleEditClick("image")}
-        />
+        <div className="container">
+          <div className="image-container">
+            <img src={imagePreview} alt="Your Image" className="image" />
+            {role === "admin" && beingEdited && (
+              <label htmlFor="file-upload" className="custom-file-upload">
+                <input
+                  id="file-upload"
+                  type="file"
+                  accept="image/*"
+                  className="input-file"
+                  onChange={handleFileChange}
+                  style={{ display: "none" }}
+                />
+                <div className="centered-button"></div>
+                <button
+                  style={{ pointerEvents: "none" }}
+                  className="centered-button"
+                >
+                  +
+                </button>
+              </label>
+            )}
+          </div>
+        </div>
       </div>
       <div className="bottom-left">
         <div>
@@ -121,25 +173,34 @@ const Item = ({
         </div>
       </div>
       <div className="bottom-right">
-        {isAdmin ? (
+        {role === "admin" ? (
           <div>
             <button className="tombol" onClick={deleteItem}>
               hapus
             </button>
-            {editableItem === "name" ? (
+            {beingEdited ? (
               <div>
-                <button className="tombol" onClick={increaseQty}>
+                <button
+                  className="tombol"
+                  onClick={() => handleEditClick(false)}
+                >
                   Batal
                 </button>
-                <button className="tombol" onClick={increaseQty}>
+                <button className="tombol" onClick={handleSaveItem}>
                   Simpan
                 </button>
               </div>
             ) : (
-              <button className="tombol" onClick={cancelHandler}>
+              <button className="tombol" onClick={() => handleEditClick(true)}>
                 Edit
               </button>
             )}
+          </div>
+        ) : role === "clerk" ? (
+          <div>
+            <button className="tombol" onClick={clerkJobHandler}>
+              {transactionFollowUp}
+            </button>
           </div>
         ) : (
           <div>

@@ -9,6 +9,7 @@ import Cart from "../components/cartComponent";
 
 import { GetAll, Delete } from "../itemCaller";
 import { Link } from "react-router-dom";
+import { setModal } from "../Dashboard";
 
 const Catalog = ({ rolee, tableNo }) => {
   const no_table = tableNo || "";
@@ -166,9 +167,16 @@ const Catalog = ({ rolee, tableNo }) => {
     else return "";
   };
 
-  const handleItemEdit = (item_id) => {
-    setEditedItemId(item_id);
-    console.log(item_id);
+  const handleItemEdit = (item_id, e) => {
+    if (e)
+      setEditedItemId(item_id); // true means edit, false means cancel
+    else setEditedItemId("");
+  };
+
+  const handleSaveItem = (item_id, formData) => {
+    // Here you can perform the logic to save the item, including sending
+    // the form data (including the image file) to the backend
+    console.log(formData); // Just for demonstration
   };
 
   const handleItemDelete = (item_id) => {
@@ -196,9 +204,11 @@ const Catalog = ({ rolee, tableNo }) => {
                         item={item}
                         apiUrl={apiUrl}
                         startqty={getItemById(item.item_id)}
+                        role={role}
                         onEdit={(qty) =>
                           handleEdit(item.item_id, item.price, qty)
                         }
+                        onSaveItem={handleSaveItem}
                         cancel={() => deleteFromCart(item.item_id)}
                         listed={checkItem(item.item_id)}
                       />
@@ -247,40 +257,81 @@ const Catalog = ({ rolee, tableNo }) => {
             )}
           </div>
         )}
+        {rolee === "clerk" && (
+          <div>
+            <div
+              style={{
+                zIndex: "999",
+                position: "fixed",
+                bottom: "-1%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                textAlign: "center",
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => setModal()}
+                className="tombolbgrnd"
+              >
+                Pesanann
+              </button>
+            </div>
+          </div>
+        )}
 
         {rolee === "clerk" || (rolee === "admin" && <FileUploader />)}
         <div>
           <div className="catalog-kontener">
             <GetAll setItems={setItems} setLoading={setLoading} />
-            {tempitems.length > 0 ? (
-              <div className="kontener">
-                {tempitems.map((item) => (
-                  <div key={item.item_id} className="rectangle border">
-                    <Item
-                      isDisabled={
-                        editedItemId != "" && editedItemId != item.item_id
-                          ? true
-                          : false
-                      }
-                      item={item}
-                      apiUrl={apiUrl}
-                      isAdmin={role === "admin" ? true : false}
-                      startqty={getItemById(item.item_id)}
-                      onEdit={(qty) =>
-                        handleEdit(item.item_id, item.price, qty)
-                      }
-                      cancel={() => deleteFromCart(item.item_id)}
-                      listed={checkItem(item.item_id)}
-                      onItemEdit={() => handleItemEdit(item.item_id)}
-                      deleteItem={() => handleItemDelete(item.item_id)}
-                    />
-                  </div>
-                ))}
-                <div className="rectangle"></div>
-              </div>
-            ) : (
-              <h1 className="no-products-message">Tidak ada produk</h1>
-            )}
+            <div className="kontener">
+              {rolee === "admin" && (
+                <div
+                  className="rectangle border"
+                  style={{ position: "relative" }}
+                >
+                  <h4
+                    style={{
+                      position: "absolute",
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%, -50%)",
+                      margin: "0", // Remove default margin
+                    }}
+                  >
+                    +
+                  </h4>
+                </div>
+              )}
+              {tempitems.length > 0 ? (
+                <>
+                  {tempitems.map((item) => (
+                    <div key={item.item_id} className="rectangle border">
+                      <Item
+                        item={item}
+                        apiUrl={apiUrl}
+                        startqty={getItemById(item.item_id)}
+                        listed={checkItem(item.item_id)}
+                        onEdit={(qty) =>
+                          handleEdit(item.item_id, item.price, qty)
+                        }
+                        // below is for admin and clerk
+                        role={role}
+                        // below is for admin
+                        beingEdited={editedItemId === item.item_id}
+                        cancel={() => deleteFromCart(item.item_id)}
+                        onItemEdit={(e) => handleItemEdit(item.item_id, e)}
+                        deleteItem={() => handleItemDelete(item.item_id)}
+                        onSaveItem={(e) => handleSaveItem(item.item_id, e)}
+                      />
+                    </div>
+                  ))}
+                  <div className="rectangle"></div>
+                </>
+              ) : (
+                <h1 className="no-products-message">Tidak ada produk</h1>
+              )}
+            </div>
           </div>
         </div>
       </div>

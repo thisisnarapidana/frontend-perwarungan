@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Draggable from "react-draggable";
 
 const TrackDetails = ({
@@ -10,9 +10,32 @@ const TrackDetails = ({
   reqTrackHandle,
 }) => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [gradientColor, setGradientColor] = useState(
+    "linear-gradient(to right, white, white 0%)",
+  );
+
+  useEffect(() => {
+    const containerWidth =
+      document.querySelector(".items-container").offsetWidth;
+    // Calculate the position percentage
+    const positionPercentage = (position.x / containerWidth) * 100;
+
+    const greenPercentage = (positionPercentage - 30) * 5; // Adjust the multiplier as needed
+    setGradientColor(
+      `linear-gradient(to right, green, white ${greenPercentage}%, white)`,
+    );
+  }, [position.x]);
 
   const handleDrag = (e, ui) => {
-    setPosition({ x: ui.x, y: 0 }); // Only update the x-coordinate
+    setPosition({ x: ui.x, y: 0 });
+    const containerWidth =
+      document.querySelector(".items-container").offsetWidth;
+    // Calculate the position percentage
+    const positionPercentage = (position.x / containerWidth) * 100;
+
+    if (positionPercentage < 0) setPosition({ x: 0, y: 0 });
+
+    if (positionPercentage > 50) setPosition({ x: containerWidth * 0.5, y: 0 });
   };
 
   const handleStop = () => {
@@ -26,8 +49,9 @@ const TrackDetails = ({
     // Here you can define your threshold and set the position back to center if needed
     if (positionPercentage < -50) {
       console.log("remove");
-    } else if (positionPercentage > 50) {
+    } else if (positionPercentage >= 50) {
       reqTrackHandle();
+      setPosition({ x: 0, y: 0 });
       return;
     } else {
       setPosition({ x: 0, y: 0 });
@@ -57,7 +81,10 @@ const TrackDetails = ({
       onDrag={handleDrag}
       onStop={handleStop}
     >
-      <div className={draggable ? "item bottomborder" : "item"}>
+      <div
+        className={draggable ? "item bottomborder" : "item"}
+        style={{ background: gradientColor }}
+      >
         <img src={image} alt="Music" className="item-image" />
         <div className="item-info">
           <h3 className="music-name">{name}</h3>

@@ -35,17 +35,8 @@
   right: 0;
 }
 
-.image {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 140px;
-  height: 140px;
-  border-radius: 8px;
-  object-fit: cover;
-}
 .qty {
-  background-color: white;
+  background-color: rgb(255, 255, 255);
   border-radius: 40%;
   padding: 4px 10px;
   display: inline-block;
@@ -53,9 +44,62 @@
   color: rgb(103, 192, 103);
 }
 
-.input {
+.name {
   height: 40px; /* Set the desired height */
   padding: 10px; /* Adjust padding as needed */
   font-size: 16px; /* Adjust font size as needed */
   box-sizing: border-box; /* Ensure padding is included in the height */
+  font-weight: bold;
+  font-size: 25px;
+}
+.price {
+  height: 20px; /* Set the desired height */
+  padding: 10px; /* Adjust padding as needed */
+  font-size: 16px; /* Adjust font size as needed */
+  box-sizing: border-box; /* Ensure padding is included in the height */
+}
+.transparent {
+  background: transparent;
+  border-color: transparent;
+  caret-color: transparent;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.image-container {
+  position: relative;
+  display: inline-block;
+
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 140px;
+  height: 140px;
+}
+
+.centered-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40%;
+  height: 40%;
+  background-color: #92929298;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.image {
+  border-radius: 8px;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
 }
