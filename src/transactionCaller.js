@@ -34,6 +34,38 @@ export const Checkout = async (table_id) => {
   }
 };
 
+export const getMyTransactions = async (buyer_id) => {
+  try {
+    const response = await fetch(apiUrl + "/transaction/process", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("session_id"),
+      },
+      body: JSON.stringify({
+        buyer_id: buyer_id,
+      }),
+    });
+
+    if (!response.ok) {
+      console.error("update followUp failed. Status:", response.status);
+      return {
+        success: false,
+        message: "update followUp failed. Please try again.",
+      };
+    }
+
+    const data = await response.json();
+    return { success: true, data };
+  } catch (error) {
+    console.error("Error during checkout:", error);
+    return {
+      success: false,
+      message: "An error occurred during checkout. Please try again.",
+    };
+  }
+};
+
 export const getTransactionInProcess = async () => {
   try {
     const response = await fetch(apiUrl + "/transaction/process", {
@@ -49,6 +81,38 @@ export const getTransactionInProcess = async () => {
       return {
         success: false,
         message: "get process failed. Please try again.",
+      };
+    }
+
+    const data = await response.json();
+    return { success: true, data };
+  } catch (error) {
+    console.error("Error during checkout:", error);
+    return {
+      success: false,
+      message: "An error occurred during checkout. Please try again.",
+    };
+  }
+};
+
+export const setClerkFollowUp = async (transaction_id) => {
+  try {
+    const response = await fetch(apiUrl + "/transaction/process", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("session_id"),
+      },
+      body: JSON.stringify({
+        transaction_id: transaction_id,
+      }),
+    });
+
+    if (!response.ok) {
+      console.error("update followUp failed. Status:", response.status);
+      return {
+        success: false,
+        message: "update followUp failed. Please try again.",
       };
     }
 

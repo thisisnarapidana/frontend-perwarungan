@@ -11,6 +11,7 @@ const Item = ({
 
   //below is for admin and clerk
   role,
+  forDisplay,
 
   //below is for admin
   beingEdited,
@@ -199,7 +200,7 @@ const Item = ({
         ) : role === "clerk" ? (
           <div>
             <button className="tombol" onClick={clerkJobHandler}>
-              {transactionFollowUp}
+              {forDisplay === "listpesanan" ? transactionFollowUp : "Tambahkan"}
             </button>
           </div>
         ) : (

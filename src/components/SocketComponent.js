@@ -14,9 +14,12 @@ function useSocket() {
       setSocketId(newSocket.id);
     });
 
-    newSocket.on("transaction", ({ table_id, transaction_id }) => {
-      console.log("tr");
-      setModal(transaction_id);
+    newSocket.on("followUp", () => {
+      setModal();
+    });
+
+    newSocket.on("transaction", () => {
+      setModal();
     });
 
     return () => {
