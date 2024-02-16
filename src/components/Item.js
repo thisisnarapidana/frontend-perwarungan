@@ -41,14 +41,14 @@ const Item = ({
         setImagePreview(apiUrl + "/" + item.image_url);
 
       let name = "";
-      if (forDisplay === "listpesanan") name = formData.qty + "x " + item.name;
+      if (forDisplay === "listpesanan") name = startqty + "x " + item.name;
       else name = item.name;
 
       setFormData({
         name: name,
         price: item.price,
         cogs: item.cogs,
-        qty: role === "admin" ? (item.startQty || item.qty) : startqty,
+        qty: role === "admin" ? startqty || item.qty : startqty,
       });
     }
   }, [item]);
@@ -100,32 +100,32 @@ const Item = ({
 
   const cancelHandler = () => {
     setFormData({
-      qty: 0
+      qty: 0,
     });
 
     //function work on cart
-    if(!beingEdited) cancel();
+    if (!beingEdited) cancel();
   };
 
   const decreaseQty = () => {
     if (formData.qty > 0) {
       setFormData({
-        qty : formData.qty - 1
-      })
-      
-    //function work on cart
-      if(!beingEdited) onEdit(formData.qty - 1);
+        qty: formData.qty - 1,
+      });
+
+      //function work on cart
+      if (!beingEdited) onEdit(formData.qty - 1);
     }
     if (formData.qty === 1) cancel();
   };
 
   const increaseQty = () => {
     setFormData({
-      qty : formData.qty + 1
-    })
-    
+      qty: formData.qty + 1,
+    });
+
     //function work on cart
-    if(!beingEdited) onEdit(formData.qty + 1);
+    if (!beingEdited) onEdit(formData.qty + 1);
   };
 
   const handleEditClick = (t) => {
@@ -170,15 +170,15 @@ const Item = ({
           onChange={(e) => handleFieldChange(e)}
         />
         {role === "admin" && (
-            <input
-              disabled={!beingEdited}
-              className={!beingEdited ? "price transparent" : "price"}
-              name="cogs"
-              type="text"
-              value={formData.cogs}
-              placeholder="Biaya produksi"
-              onChange={(e) => handleFieldChange(e)}
-            />
+          <input
+            disabled={!beingEdited}
+            className={!beingEdited ? "price transparent" : "price"}
+            name="cogs"
+            type="text"
+            value={formData.cogs}
+            placeholder="Biaya produksi"
+            onChange={(e) => handleFieldChange(e)}
+          />
         )}
       </div>
       <div className="top-right">
@@ -278,12 +278,15 @@ const Item = ({
               </>
             ) : (
               <>
-              <button className="tombol" onClick={() => handleEditClick(true)}>
-                Edit
-              </button>
-              <button className="tombol" onClick={deleteItem}>
-                hapus
-              </button>
+                <button
+                  className="tombol"
+                  onClick={() => handleEditClick(true)}
+                >
+                  Edit
+                </button>
+                <button className="tombol" onClick={deleteItem}>
+                  hapus
+                </button>
               </>
             )}
           </>
@@ -296,13 +299,20 @@ const Item = ({
             </button>
           </div>
         ) : role === "guest" ? (
-          <div>
+          <>
+            {transactionFollowUp === 11 && (
+              <button className="tombol" onClick={clerkJobHandler}>
+                {forDisplay === "listpesanan"
+                  ? followUpText(role, transactionFollowUp)
+                  : "Tambahkan"}
+              </button>
+            )}
             <button className="tombol" onClick={clerkJobHandler}>
               {forDisplay === "listpesanan"
                 ? followUpText(role, transactionFollowUp)
                 : "Tambahkan"}
             </button>
-          </div>
+          </>
         ) : (
           <div>
             {!listed ? (
