@@ -19,32 +19,42 @@ const Item = ({
   onItemEdit,
   deleteItem,
   onSaveItem,
+  onUpload,
 
   //below is for clerk
   transactionFollowUp,
   clerkJobHandler,
 }) => {
-  const [qty, setQty] = useState(startqty);
   const [formData, setFormData] = useState({
     name: "",
     price: "",
-    qty: "",
-    image: null, // New state to hold the image file
+    cogs: "",
+    qty: 0,
+    image: null,
   });
 
-  const [imagePreview, setImagePreview] = useState(
-    apiUrl + "/" + item.image_url,
-  );
+  const [imagePreview, setImagePreview] = useState();
 
   useEffect(() => {
-    setFormData({
-      name: item.name,
-      price: item.price,
-      qty: item.startQty,
-    });
+    if (item) {
+      if (typeof item !== "undefined")
+        setImagePreview(apiUrl + "/" + item.image_url);
+
+      let name = "";
+      if (forDisplay === "listpesanan") name = formData.qty + "x " + item.name;
+      else name = item.name;
+
+      setFormData({
+        name: name,
+        price: item.price,
+        cogs: item.cogs,
+        qty: role === "admin" ? (item.startQty || item.qty) : startqty,
+      });
+    }
   }, [item]);
 
   const handleFileChange = (event) => {
+    if (item === null) return;
     const file = event.target.files[0];
     if (file) {
       setFormData({
@@ -89,26 +99,52 @@ const Item = ({
   // }, []);
 
   const cancelHandler = () => {
-    setQty(0);
-    cancel();
+    setFormData({
+      qty: 0
+    });
+
+    //function work on cart
+    if(!beingEdited) cancel();
   };
 
   const decreaseQty = () => {
-    if (qty > 0) {
-      setQty(qty - 1);
-      onEdit(qty - 1);
+    if (formData.qty > 0) {
+      setFormData({
+        qty : formData.qty - 1
+      })
+      
+    //function work on cart
+      if(!beingEdited) onEdit(formData.qty - 1);
     }
-    if (qty === 1) cancel();
+    if (formData.qty === 1) cancel();
   };
 
   const increaseQty = () => {
-    setQty(qty + 1);
-    onEdit(qty + 1);
+    setFormData({
+      qty : formData.qty + 1
+    })
+    
+    //function work on cart
+    if(!beingEdited) onEdit(formData.qty + 1);
   };
 
   const handleEditClick = (t) => {
     if (role === "admin") {
       onItemEdit(t);
+    }
+  };
+
+  const followUpText = (role, status) => {
+    if (role === "guest") {
+      if (status === "11") return "Menunggu diproses";
+      else if (status === "22") return "Sedang diproses";
+      else if (status === "33") return "Selesai";
+      else if (status === "43") return "Dibatalkan";
+    } else if (role === "clerk") {
+      if (status === "11") return "Proses pesanan";
+      else if (status === "22") return "Selesaikan pesanan";
+      else if (status === "33") return "Selesai";
+      else if (status === "43") return "Dibatalkan";
     }
   };
 
@@ -121,6 +157,7 @@ const Item = ({
           name="name"
           type="text"
           value={formData.name}
+          placeholder="nama"
           onChange={(e) => handleFieldChange(e)}
         />
         <input
@@ -129,8 +166,20 @@ const Item = ({
           name="price"
           type="text"
           value={formData.price}
+          placeholder="harga"
           onChange={(e) => handleFieldChange(e)}
         />
+        {role === "admin" && (
+            <input
+              disabled={!beingEdited}
+              className={!beingEdited ? "price transparent" : "price"}
+              name="cogs"
+              type="text"
+              value={formData.cogs}
+              placeholder="Biaya produksi"
+              onChange={(e) => handleFieldChange(e)}
+            />
+        )}
       </div>
       <div className="top-right">
         <div className="container">
@@ -158,29 +207,65 @@ const Item = ({
           </div>
         </div>
       </div>
-      <div className="bottom-left">
-        <div>
-          <button className="tombol" onClick={decreaseQty}>
-            -
-          </button>
+      {forDisplay === "listpesanan" ? (
+        transactionFollowUp === 11 && (
+          <div className="bottom-left">
+            <div>
+              <button className="tombol" onClick={decreaseQty}>
+                batalkan
+              </button>
+            </div>
+          </div>
+        )
+      ) : (
+        <div className="bottom-left">
+          {role === "admin" ? (
+            beingEdited ? (
+              <>
+                <div>
+                  <button className="tombol" onClick={decreaseQty}>
+                    -
+                  </button>
+                </div>
+                <div>
+                  <div className="tombol">{formData.qty}</div>
+                </div>
+                <div>
+                  <button className="tombol" onClick={increaseQty}>
+                    +
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div>
+                <div className="tombol">kuantitas {item.qty}</div>
+              </div>
+            )
+          ) : (
+            <>
+              <div>
+                <button className="tombol" onClick={decreaseQty}>
+                  -
+                </button>
+              </div>
+              <div>
+                <div className="tombol">{formData.qty}</div>
+              </div>
+              <div>
+                <button className="tombol" onClick={increaseQty}>
+                  +
+                </button>
+              </div>
+            </>
+          )}
         </div>
-        <div>
-          <div className="tombol">{qty}</div>
-        </div>
-        <div>
-          <button className="tombol" onClick={increaseQty}>
-            +
-          </button>
-        </div>
-      </div>
+      )}
+
       <div className="bottom-right">
         {role === "admin" ? (
-          <div>
-            <button className="tombol" onClick={deleteItem}>
-              hapus
-            </button>
+          <>
             {beingEdited ? (
-              <div>
+              <>
                 <button
                   className="tombol"
                   onClick={() => handleEditClick(false)}
@@ -190,17 +275,32 @@ const Item = ({
                 <button className="tombol" onClick={handleSaveItem}>
                   Simpan
                 </button>
-              </div>
+              </>
             ) : (
+              <>
               <button className="tombol" onClick={() => handleEditClick(true)}>
                 Edit
               </button>
+              <button className="tombol" onClick={deleteItem}>
+                hapus
+              </button>
+              </>
             )}
-          </div>
+          </>
         ) : role === "clerk" ? (
           <div>
             <button className="tombol" onClick={clerkJobHandler}>
-              {forDisplay === "listpesanan" ? transactionFollowUp : "Tambahkan"}
+              {forDisplay === "listpesanan"
+                ? followUpText(role, transactionFollowUp)
+                : "Tambahkan"}
+            </button>
+          </div>
+        ) : role === "guest" ? (
+          <div>
+            <button className="tombol" onClick={clerkJobHandler}>
+              {forDisplay === "listpesanan"
+                ? followUpText(role, transactionFollowUp)
+                : "Tambahkan"}
             </button>
           </div>
         ) : (

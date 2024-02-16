@@ -4,6 +4,7 @@ import "./styling/Fade.css"; // Assuming you have a CSS file for your styles
 import { Checkout } from "../transactionCaller";
 import { Link } from "react-router-dom";
 import "../tombol.css";
+import { setModal } from "../pages/Main.js";
 
 const Cart = ({ price, children, isOpen }) => {
   const [cartHeight, setCartHeight] = useState(0);
@@ -50,7 +51,7 @@ const Cart = ({ price, children, isOpen }) => {
       const table_id = parameters[2];
 
       const checkoutResponse = await Checkout(table_id);
-      console.log("Checkout Response:", checkoutResponse);
+      if (checkoutResponse.success) setModal();
     } catch (error) {
       console.error("Error during checkout:", error);
     }

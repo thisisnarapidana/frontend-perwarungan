@@ -36,22 +36,22 @@ export const Checkout = async (table_id) => {
 
 export const getMyTransactions = async (buyer_id) => {
   try {
-    const response = await fetch(apiUrl + "/transaction/process", {
+    const response = await fetch(apiUrl + "/transaction/mytransactions", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + localStorage.getItem("session_id"),
       },
-      body: JSON.stringify({
-        buyer_id: buyer_id,
-      }),
     });
 
     if (!response.ok) {
-      console.error("update followUp failed. Status:", response.status);
+      console.error(
+        "get list of transactions failed. Status:",
+        response.status,
+      );
       return {
         success: false,
-        message: "update followUp failed. Please try again.",
+        message: "get list of transactions failed. Please try again.",
       };
     }
 
@@ -95,7 +95,7 @@ export const getTransactionInProcess = async () => {
   }
 };
 
-export const setClerkFollowUp = async (transaction_id) => {
+export const setClerkFollowUp = async (detailed_transaction_id) => {
   try {
     const response = await fetch(apiUrl + "/transaction/process", {
       method: "PUT",
@@ -104,7 +104,7 @@ export const setClerkFollowUp = async (transaction_id) => {
         Authorization: "Bearer " + localStorage.getItem("session_id"),
       },
       body: JSON.stringify({
-        transaction_id: transaction_id,
+        detailed_transaction_id: detailed_transaction_id,
       }),
     });
 

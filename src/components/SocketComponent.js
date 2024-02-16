@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import io from "socket.io-client";
-import { setModal } from "../Dashboard";
+import { setModal } from "../pages/Main";
 
 function useSocket() {
   const [socket, setSocket] = useState(null);
@@ -16,6 +16,7 @@ function useSocket() {
 
     newSocket.on("followUp", () => {
       setModal();
+      console.log("followUp received");
     });
 
     newSocket.on("transaction", () => {

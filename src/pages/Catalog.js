@@ -2,18 +2,19 @@ import React, { useState, useEffect } from "react";
 import apiUrl from "../apiConfig";
 import "./styling/Catalog.css";
 
-import FileUploader from "../components/FileUploader";
 import Item from "../components/Item";
 
 import Cart from "../components/cartComponent";
 
-import { GetAll, Delete } from "../itemCaller";
+import { Post, Update, GetAll, Delete } from "../itemCaller";
 import { Link } from "react-router-dom";
-import { setModal } from "../Dashboard";
+import { setModal } from "./Main";
 
 const Catalog = ({ rolee, tableNo }) => {
   const no_table = tableNo || "";
   const role = rolee || "";
+  const [isItemCreatorVisible, setItemCreatorVisibility] = useState(false);
+
   const [items, setItems] = useState([]);
   const [tempitems, setTempItems] = useState([]);
 
@@ -163,8 +164,8 @@ const Catalog = ({ rolee, tableNo }) => {
       (total, item) => total + item.price * item.qty,
       0,
     );
-    if (res > 0) return new Intl.NumberFormat("en-DE").format(res);
-    else return "";
+    if (res > 0) return "Rp" + new Intl.NumberFormat("en-DE").format(res);
+    else return "Rp 0";
   };
 
   const handleItemEdit = (item_id, e) => {
@@ -176,12 +177,17 @@ const Catalog = ({ rolee, tableNo }) => {
   const handleSaveItem = (item_id, formData) => {
     // Here you can perform the logic to save the item, including sending
     // the form data (including the image file) to the backend
-    console.log(formData); // Just for demonstration
+    Update(item_id, formData); // Just for demonstration
   };
 
   const handleItemDelete = (item_id) => {
     console.log(item_id);
     Delete(item_id);
+  };
+
+  const handleItemCreator = () => {
+    setItemCreatorVisibility(true);
+    handleItemEdit("new item", true);
   };
 
   return (
@@ -208,7 +214,7 @@ const Catalog = ({ rolee, tableNo }) => {
                         onEdit={(qty) =>
                           handleEdit(item.item_id, item.price, qty)
                         }
-                        onSaveItem={handleSaveItem}
+                        onSaveItem={(data) => handleSaveItem(item.item_id, data)}
                         cancel={() => deleteFromCart(item.item_id)}
                         listed={checkItem(item.item_id)}
                       />
@@ -251,7 +257,28 @@ const Catalog = ({ rolee, tableNo }) => {
                       <div className="tombol">dikirim ke meja no {tableNo}</div>
                     ))}
                   &nbsp;
-                  {!isCartOpen ? `Keranjang ${getLength()}` : "Tutup"}
+                  {!isCartOpen && `Keranjang ${getLength()}`}
+                </button>
+              </div>
+            )}
+
+            {isCartOpen && (
+              <div
+                style={{
+                  zIndex: "999",
+                  position: "fixed",
+                  bottom: "-1%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  textAlign: "center",
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={handleCart}
+                  className="tombolbgrnd"
+                >
+                  Tutup
                 </button>
               </div>
             )}
@@ -280,29 +307,33 @@ const Catalog = ({ rolee, tableNo }) => {
           </div>
         )}
 
-        {rolee === "clerk" || (rolee === "admin" && <FileUploader />)}
         <div>
           <div className="catalog-kontener">
             <GetAll setItems={setItems} setLoading={setLoading} />
             <div className="kontener">
               {rolee === "admin" && (
-                <div
-                  className="rectangle border"
-                  style={{ position: "relative" }}
-                >
-                  <h4
-                    style={{
-                      position: "absolute",
-                      top: "50%",
-                      left: "50%",
-                      transform: "translate(-50%, -50%)",
-                      margin: "0", // Remove default margin
-                    }}
-                  >
-                    +
-                  </h4>
-                </div>
+                <>
+                  {editedItemId === "new item" && isItemCreatorVisible ? (
+                    <div className="rectangle border">
+                      <Item
+                        role={role}
+                        beingEdited={true}
+                        onItemEdit={() => handleItemEdit("new item", false)}
+                        onSaveItem={(e) => Post(e)}
+                      />
+                    </div>
+                  ) : (
+                    <button
+                      className="rectangle border"
+                      style={{ position: "relative", margin: "0" }}
+                      onClick={() => handleItemCreator()}
+                    >
+                      +
+                    </button>
+                  )}
+                </>
               )}
+
               {tempitems.length > 0 ? (
                 <>
                   {tempitems.map((item) => (

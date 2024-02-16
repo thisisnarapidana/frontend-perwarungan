@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import apiUrl from "../apiConfig";
 import useSocket from "../components/SocketComponent";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { useAuthentication } from "../userCaller.js";
@@ -8,6 +9,16 @@ import Login from "./Login";
 import Scan from "./Scan";
 import TableComponent from "./TableComponent";
 import "../../node_modules/bootstrap/dist/css/bootstrap.min.css";
+import Modal from "react-bootstrap/Modal";
+import Item from "../components/Item";
+
+import {
+  getMyTransactions,
+  getTransactionInProcess,
+  setClerkFollowUp,
+} from "../transactionCaller.js";
+
+let setModalFunction;
 
 const Main = () => {
   return (
@@ -24,6 +35,58 @@ const MainRoutes = () => {
 
   let [auth, setAuth] = useState({ success: false, user_id: "", role: "" });
 
+  const [showModal, setShowModal] = useState(false);
+  const [order, setOrder] = useState([]);
+
+  useEffect(() => {
+    if (localStorage.getItem("session_id") === "") return;
+    if (auth.role === "clerk") getTransactionOnNewTransaction();
+    else if (auth.role === "guest") getmytransactions();
+  }, []);
+
+  // Function to toggle modal visibility
+  const toggleModal = () => {
+    setShowModal(!showModal);
+  };
+
+  // Function to set modal visibility from outside
+  const setModal = () => {
+    if (localStorage.getItem("session_id") === "") return;
+    if (auth.role === "clerk") getTransactionOnNewTransaction();
+    else if (auth.role === "guest") getmytransactions();
+    setShowModal(true);
+    // setActiveKey("denah");
+  };
+
+  const handleClerkJob = async (detailed_transaction_id) => {
+    try {
+      await setClerkFollowUp(detailed_transaction_id);
+      getTransactionOnNewTransaction();
+    } catch (error) {
+      console.error("Error fetching in-process transactions: ", error);
+    }
+  };
+
+  const getTransactionOnNewTransaction = async () => {
+    try {
+      const response = await getTransactionInProcess();
+      setOrder(response.data || []);
+    } catch (error) {
+      console.error("Error fetching in-process transactions: ", error);
+    }
+  };
+
+  const getmytransactions = async () => {
+    try {
+      const response = await getMyTransactions();
+      setOrder(response.data || []);
+    } catch (error) {
+      console.error("Error fetching in-process transactions: ", error);
+    }
+  };
+
+  setModalFunction = setModal;
+
   useEffect(() => {
     if (!socket) return;
 
@@ -39,6 +102,52 @@ const MainRoutes = () => {
 
   return (
     <>
+      <Modal
+        show={showModal}
+        onHide={toggleModal}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Pesanann</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {order.length === 0 ? (
+            <p>loading..</p>
+          ) : (
+            order.map((transaction) => (
+              <div>
+                <h1>
+                  meja nomor{" "}
+                  {transaction.table !== null && transaction.table.no_table}
+                </h1>
+                {transaction.detailed_transactions.map((detail) => (
+                  <div
+                    key={detail.detailed_transaction_id}
+                    className="rectangle border"
+                  >
+                    <Item
+                      //below is for clerk
+                      key={detail.detailed_transaction_id}
+                      item={detail.item}
+                      apiUrl={apiUrl}
+                      startqty={detail.qty_stock_change * -1}
+                      role={auth.role}
+                      forDisplay={"listpesanan"}
+                      fordisplay={"listpesanan"}
+                      clerkJobHandler={() =>
+                        handleClerkJob(detail.detailed_transaction_id)
+                      }
+                      transactionFollowUp={detail.status}
+                    />
+                  </div>
+                ))}
+              </div>
+            ))
+          )}
+        </Modal.Body>
+      </Modal>
+
       <Navbar
         isLogged={
           auth.role === "guest" ||
@@ -60,3 +169,4 @@ const MainRoutes = () => {
 };
 
 export default Main;
+export { setModalFunction as setModal };
