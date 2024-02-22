@@ -22,6 +22,7 @@ const Item = ({
   onUpload,
 
   //below is for clerk
+  paymentStatus,
   transactionFollowUp,
   clerkJobHandler,
 }) => {
@@ -100,6 +101,7 @@ const Item = ({
 
   const cancelHandler = () => {
     setFormData({
+      ...formData,
       qty: 0,
     });
 
@@ -110,6 +112,7 @@ const Item = ({
   const decreaseQty = () => {
     if (formData.qty > 0) {
       setFormData({
+        ...formData,
         qty: formData.qty - 1,
       });
 
@@ -121,6 +124,7 @@ const Item = ({
 
   const increaseQty = () => {
     setFormData({
+      ...formData,
       qty: formData.qty + 1,
     });
 
@@ -211,7 +215,7 @@ const Item = ({
         transactionFollowUp === 11 && (
           <div className="bottom-left">
             <div>
-              <button className="tombol" onClick={decreaseQty}>
+              <button className="tombol roundedEdge" onClick={decreaseQty}>
                 batalkan
               </button>
             </div>
@@ -223,36 +227,36 @@ const Item = ({
             beingEdited ? (
               <>
                 <div>
-                  <button className="tombol" onClick={decreaseQty}>
+                  <button className="tombol roundedEdge" onClick={decreaseQty}>
                     -
                   </button>
                 </div>
                 <div>
-                  <div className="tombol">{formData.qty}</div>
+                  <div className="tombol roundedEdge">{formData.qty}</div>
                 </div>
                 <div>
-                  <button className="tombol" onClick={increaseQty}>
+                  <button className="tombol roundedEdge" onClick={increaseQty}>
                     +
                   </button>
                 </div>
               </>
             ) : (
               <div>
-                <div className="tombol">kuantitas {item.qty}</div>
+                <div className="tombol roundedEdge">kuantitas {item.qty}</div>
               </div>
             )
           ) : (
             <>
               <div>
-                <button className="tombol" onClick={decreaseQty}>
+                <button className="tombol roundedEdge" onClick={decreaseQty}>
                   -
                 </button>
               </div>
               <div>
-                <div className="tombol">{formData.qty}</div>
+                <div className="tombol roundedEdge">{formData.qty}</div>
               </div>
               <div>
-                <button className="tombol" onClick={increaseQty}>
+                <button className="tombol roundedEdge" onClick={increaseQty}>
                   +
                 </button>
               </div>
@@ -267,24 +271,24 @@ const Item = ({
             {beingEdited ? (
               <>
                 <button
-                  className="tombol"
+                  className="tombol roundedEdge"
                   onClick={() => handleEditClick(false)}
                 >
                   Batal
                 </button>
-                <button className="tombol" onClick={handleSaveItem}>
+                <button className="tombol roundedEdge" onClick={handleSaveItem}>
                   Simpan
                 </button>
               </>
             ) : (
               <>
                 <button
-                  className="tombol"
+                  className="tombol roundedEdge"
                   onClick={() => handleEditClick(true)}
                 >
                   Edit
                 </button>
-                <button className="tombol" onClick={deleteItem}>
+                <button className="tombol roundedEdge" onClick={deleteItem}>
                   hapus
                 </button>
               </>
@@ -292,22 +296,24 @@ const Item = ({
           </>
         ) : role === "clerk" ? (
           <div>
-            <button className="tombol" onClick={clerkJobHandler}>
-              {forDisplay === "listpesanan"
-                ? followUpText(role, transactionFollowUp)
-                : "Tambahkan"}
+            <button className="tombol roundedEdge" onClick={clerkJobHandler}>
+              {
+                forDisplay === "listpesanan" ? 
+                  (paymentStatus === "paid" ? followUpText(role, transactionFollowUp) : "menunggu pembayaran")
+                  : 
+                  "Tambahkan"
+              }
             </button>
           </div>
         ) : role === "guest" ? (
           <>
-            {transactionFollowUp === 11 && (
-              <button className="tombol" onClick={clerkJobHandler}>
+            {transactionFollowUp === "11" && (
+              <button className="tombol roundedEdge" onClick={clerkJobHandler}>
                 {forDisplay === "listpesanan"
-                  ? followUpText(role, transactionFollowUp)
-                  : "Tambahkan"}
+                  && "Batalkan"}
               </button>
             )}
-            <button className="tombol" onClick={clerkJobHandler}>
+            <button className="tombol roundedEdge" onClick={clerkJobHandler}>
               {forDisplay === "listpesanan"
                 ? followUpText(role, transactionFollowUp)
                 : "Tambahkan"}
@@ -316,11 +322,11 @@ const Item = ({
         ) : (
           <div>
             {!listed ? (
-              <button className="tombol" onClick={increaseQty}>
+              <button className="tombol roundedEdge" onClick={increaseQty}>
                 Tambahkan
               </button>
             ) : (
-              <button className="tombol" onClick={cancelHandler}>
+              <button className="tombol roundedEdge" onClick={cancelHandler}>
                 Batalkan
               </button>
             )}

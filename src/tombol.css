@@ -6,7 +6,6 @@
   letter-spacing: 1px;
   line-height: 15px;
   border: 1px solid rgb(103, 192, 103);
-  border-radius: 40px;
   transition: all 0.3s ease 0s;
   padding: 7px 20px;
   background: rgb(255, 255, 255);
@@ -14,6 +13,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.roundedEdge {
+  border-radius: 40px;
 }
 
 .tombolbgrnd {

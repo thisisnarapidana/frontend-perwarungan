@@ -27,7 +27,7 @@ function SalesChart() {
         },
       );
       const data = await response.json();
-      console.log(data);
+      
       // Process the data
       const processedModal = modalData(data);
       const processedUntungKotor = untungKotorData(data);

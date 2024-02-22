@@ -249,12 +249,18 @@ const Catalog = ({ rolee, tableNo }) => {
                       <Link
                         style={{ textDecoration: "none" }}
                         to="/scan"
-                        className="tombol"
+                        className="tombol roundedEdge"
                       >
                         scan meja
                       </Link>
                     ) : (
-                      <div className="tombol">dikirim ke meja no {tableNo}</div>
+                      <Link
+                        style={{ textDecoration: "none" }}
+                        to="/scan"
+                        className="tombol roundedEdge"
+                      >
+                        dikirim ke meja no {tableNo}
+                      </Link>
                     ))}
                   &nbsp;
                   {!isCartOpen && `Keranjang ${getLength()}`}

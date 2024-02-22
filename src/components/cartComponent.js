@@ -1,17 +1,23 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 import { firstScan } from "../userCaller.js";
 import "./styling/Fade.css"; // Assuming you have a CSS file for your styles
-import { Checkout } from "../transactionCaller";
+import { Checkout, retrieveSpecificTransaction } from "../transactionCaller";
 import { Link } from "react-router-dom";
 import "../tombol.css";
 import { setModal } from "../pages/Main.js";
 
 const Cart = ({ price, children, isOpen }) => {
+  const navigate = useNavigate();
   const [cartHeight, setCartHeight] = useState(0);
   const [started, start] = useState(false);
   const [logged, setLog] = useState(false);
+  const [isTakeaway, setIsTakeaway] = useState(false);
+  const [paymentType, setPaymentType] = useState("");
 
   useEffect(() => {
+    // isOpen is true when the cart is open
     if (isOpen) {
       // Set the height of the cart to match its content
       const cartContentHeight =
@@ -19,8 +25,29 @@ const Cart = ({ price, children, isOpen }) => {
       setCartHeight(cartContentHeight);
       cekMeja();
     }
-    setTimeout(function () {
-      //Start the timer
+
+    const fetchData = async () => {
+      const params = new URLSearchParams(window.location.search);
+  
+      if(params.has('transaction_status')) {
+        const orderId = params.get('order_id');
+  
+        const gettransaction = await retrieveSpecificTransaction(orderId);
+        if(gettransaction.success) {
+          window.location.href = window.location.protocol + "//" + window.location.host + "/scan/" + gettransaction.data.table_id + "/#checkout";
+        }
+      }
+      
+      if(window.location.hash === '#checkout'){
+        setModal();
+        window.history.replaceState(null, document.title, window.location.pathname + window.location.search);
+      }
+    };
+  
+    fetchData();
+
+    setTimeout(function () {      
+      //Start the timer, this prevent animation fadeout on after loading the page
       start(true);
     }, 3000);
   }, [isOpen]);
@@ -40,6 +67,7 @@ const Cart = ({ price, children, isOpen }) => {
       if (localStorage.getItem("session_id") === null) {
         try {
           await firstScan();
+          if(paymentType === 'cash') window.location.href = window.location + "/#checkout";
         } catch (error) {}
       }
 
@@ -50,8 +78,12 @@ const Cart = ({ price, children, isOpen }) => {
 
       const table_id = parameters[2];
 
-      const checkoutResponse = await Checkout(table_id);
-      if (checkoutResponse.success) setModal();
+      const checkoutResponse = await Checkout(table_id, paymentType);
+
+      if (checkoutResponse.success){
+        if(paymentType === 'cash') setModal();
+        else if(paymentType === 'emoney') window.location.href = checkoutResponse.data.emoneyRedirectUrl + "#/gopay-finish-deeplink";
+      }
     } catch (error) {
       console.error("Error during checkout:", error);
     }
@@ -80,24 +112,46 @@ const Cart = ({ price, children, isOpen }) => {
           justifyContent: "space-between",
           width: "100%",
           height: "100px",
+          paddingLeft: "20px",
+          paddingRight: "20px",
         }}
       >
-        <h1 style={{ minWidth: "50%", textAlign: "center", margin: 0 }}>
-          {price}
-        </h1>
-        <div
+
+<div
           style={{
-            maxWidth: "50%",
-            height: "50%",
             display: "flex",
             justifyContent: "space-between",
           }}
         >
+          <div>
+            <h1 style={{ margin: 0, marginBottom: "10px" }}>{price}</h1>
+            <div style={{ margin: 0 }}>
+                {logged === false ? (
+              <select className="tombol" name="cars" id="cars" onChange={(e) => setIsTakeaway(e.target.value)}>
+                <option value="" disabled selected hidden>
+                  Makan ditempat ?
+                </option>
+                <option value="y">benar</option>
+                <option value="n">salah</option>
+              </select>
+                ) : (
+                  <select className="tombol roundedEdge" name="cars" id="cars" onChange={(e) => setPaymentType(e.target.value)}>
+                    <option value="" disabled selected hidden>
+                      Tipe pembayaran?
+                    </option>
+                    <option value="cash">Cash</option>
+                    <option value="emoney">EMoney</option>
+                  </select>
+                )}
+            </div>
+          </div>
+        </div>
+
           {logged === false ? (
             <Link
               style={{ textDecoration: "none" }}
               to="/scan"
-              className="tombol"
+              className="tombol roundedEdge"
             >
               scan meja
             </Link>
@@ -107,10 +161,9 @@ const Cart = ({ price, children, isOpen }) => {
               onClick={CheckOut}
               className="tombol"
             >
-              checkout
+              Checkout
             </button>
           )}
-        </div>
       </div>
     </div>
   );

@@ -38,12 +38,6 @@ const MainRoutes = () => {
   const [showModal, setShowModal] = useState(false);
   const [order, setOrder] = useState([]);
 
-  useEffect(() => {
-    if (localStorage.getItem("session_id") === "") return;
-    if (auth.role === "clerk") getTransactionOnNewTransaction();
-    else if (auth.role === "guest") getmytransactions();
-  }, []);
-
   // Function to toggle modal visibility
   const toggleModal = () => {
     setShowModal(!showModal);
@@ -53,7 +47,7 @@ const MainRoutes = () => {
   const setModal = () => {
     if (localStorage.getItem("session_id") === "") return;
     if (auth.role === "clerk") getTransactionOnNewTransaction();
-    else if (auth.role === "guest") getmytransactions();
+    else getmytransactions();
     setShowModal(true);
     // setActiveKey("denah");
   };
@@ -138,6 +132,7 @@ const MainRoutes = () => {
                       clerkJobHandler={() =>
                         handleClerkJob(detail.detailed_transaction_id)
                       }
+                      paymentStatus={transaction.payment_status}
                       transactionFollowUp={detail.status}
                     />
                   </div>

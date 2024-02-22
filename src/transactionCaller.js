@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import apiUrl from "./apiConfig";
 
-export const Checkout = async (table_id) => {
+export const Checkout = async (table_id, payment_type) => {
   try {
     const cardItems = JSON.parse(localStorage.getItem("cartItems")) || [];
     const formattedItems = cardItems.map((item) => [item.item_id, item.qty]);
@@ -15,6 +15,7 @@ export const Checkout = async (table_id) => {
       body: JSON.stringify({
         table_id: table_id,
         items: formattedItems,
+        payment_type: payment_type,
       }),
     });
 
@@ -25,6 +26,7 @@ export const Checkout = async (table_id) => {
 
     const data = await response.json();
     return { success: true, data };
+    
   } catch (error) {
     console.error("Error during checkout:", error);
     return {
@@ -34,7 +36,7 @@ export const Checkout = async (table_id) => {
   }
 };
 
-export const getMyTransactions = async (buyer_id) => {
+export const getMyTransactions = async () => {
   try {
     const response = await fetch(apiUrl + "/transaction/mytransactions", {
       method: "GET",
@@ -151,4 +153,34 @@ export const Kulakan = ({ setItems, setLoading }) => {
   }, [setItems, setLoading]);
 
   return null;
+};
+
+export const retrieveSpecificTransaction = async (transaction_id) => {
+  console.log(transaction_id);
+  try {
+    const response = await fetch(apiUrl + "/transaction/" + transaction_id, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("session_id"),
+      },
+    });
+
+    if (!response.ok) {
+      console.error("get transaction failed. Status:", response.status);
+      return {
+        success: false,
+        message: "get process failed. Please try again.",
+      };
+    }
+
+    const data = await response.json();
+    return { success: true, data };
+  } catch (error) {
+    console.error("Error during checkout:", error);
+    return {
+      success: false,
+      message: "An error occurred during checkout. Please try again.",
+    };
+  }
 };

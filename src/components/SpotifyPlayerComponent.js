@@ -189,18 +189,6 @@ function SpotifyPlayerComponent({ rolee, socket }) {
                 )}
               </>
             )}
-            {/*             
-            {tableNo == "" ? (
-              <Link
-                style={{ textDecoration: "none" }}
-                to="/scan"
-                className="tombol"
-              >
-                scan meja{" "}
-              </Link>
-            ) : (
-              <div className="tombol">dikirim ke meja no {tableNo} </div>
-            )} */}
           </div>
         </div>
       </div>
